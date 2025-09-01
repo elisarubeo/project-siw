@@ -1,0 +1,23 @@
+/* Spaziature dell’hero */
+header .container{ max-width:1140px; }
+header .lead{ margin-top:.25rem; }
+
+/* Barra di ricerca centrale */
+header .input-group{
+  max-width:640px; margin:1.25rem auto 0 auto;
+}
+header .input-group .form-control{
+  border-radius:8px 0 0 8px;
+}
+header .input-group .btn{
+  border-radius:0 8px 8px 0;
+}
+
+/* Titolo sezione prodotti */
+section h2{
+  font-weight:700; color:#333; margin-bottom:1.5rem;
+}
+
+/* Card prodotti (piccoli tocchi specifici) */
+.card.h-100{ min-height:240px; }
+.card .fw-bold{ color:var(--primary); font-size:1.05rem; }

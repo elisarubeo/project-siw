@@ -69,7 +69,7 @@ public class ProdottoController {
     
     @PostMapping("/admin/saveProdotto")
     public String saveProdotto(
-        @Valid @ModelAttribute("libro") Prodotto prodotto,
+        @Valid @ModelAttribute("prodotto") Prodotto prodotto,
         BindingResult bindingResult,
         Model model) {
     	 if (prodottoService.existsByNome(prodotto.getNome())) {

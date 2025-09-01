@@ -1,0 +1,10 @@
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (1, 'Sedia Ergonomica', 129.99, 'Sedia da ufficio con supporto lombare regolabile');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (2, 'Lampada da Tavolo LED', 39.90, 'Lampada moderna a luce fredda e calda con intensità regolabile');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (3, 'Zaino Tecnico 30L', 79.50, 'Zaino resistente all’acqua, ideale per trekking e viaggi');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (4, 'Auricolari Wireless', 59.00, 'Auricolari Bluetooth con custodia di ricarica');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (5, 'Borraccia Termica 750ml', 24.99, 'Borraccia in acciaio inox, mantiene freddo/caldo fino a 12 ore');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (6, 'Tastiera Meccanica RGB', 89.00, 'Tastiera da gaming con retroilluminazione personalizzabile');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (7, 'Cuscino Memory Foam', 45.90, 'Cuscino ortopedico per un sonno confortevole');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (8, 'Ombrellone da Giardino', 149.00, 'Grande ombrellone rotondo con base in acciaio');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (9, 'Set Pentole Antiaderenti', 199.00, 'Batteria di pentole 8 pezzi rivestite in pietra');
+INSERT INTO prodotto (id, nome, prezzo, descrizione) VALUES (10, 'Bici da Città', 349.00, 'Bicicletta leggera con cambio Shimano a 6 velocità');

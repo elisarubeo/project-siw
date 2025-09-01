@@ -1,91 +1,52 @@
-/* Reset base */
-body {
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #212529;
-    margin: 0;
-    padding: 0;
+/* ====== Base / Tipografia / Utility ====== */
+:root{
+  --primary:#0d6efd;
+  --dark:#212529;
+  --muted:#666;
+  --bg:#f8f9fa;
+  --radius:10px;
+  --shadow:0 6px 15px rgba(0,0,0,.1);
 }
+*{box-sizing:border-box}
+body{
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:var(--bg);
+  color:#333;
+  margin:0;
+}
+a{color:var(--primary); text-decoration:none}
+a:hover{text-decoration:underline}
 
-/* Navbar */
-.navbar-brand {
-    font-weight: bold;
-    letter-spacing: 1px;
-}
+/* ====== Navbar (comune) ====== */
+.navbar{ padding:.75rem 1rem; box-shadow:0 2px 4px rgba(0,0,0,.08); }
+.navbar-brand{ font-weight:700; font-size:1.25rem; }
+.navbar-nav .nav-link{ margin-left:1rem; transition:color .2s ease; }
+.navbar-nav .nav-link:hover{ color:#ffc107 !important; }
 
-.navbar-nav .nav-link {
-    margin-left: 10px;
-    transition: color 0.2s ease-in-out;
-}
+/* ====== Header generico ====== */
+header{ background:linear-gradient(135deg,#e9f2ff,#f8f9fa); }
+header h1{ font-weight:800; color:#1b1e21; }
+header p.lead{ color:#555; }
 
-.navbar-nav .nav-link:hover {
-    color: #0d6efd;
+/* ====== Card generiche ====== */
+.card{
+  border:1px solid #ddd; border-radius:var(--radius);
+  transition:transform .2s ease, box-shadow .2s ease;
 }
+.card:hover{ transform:translateY(-4px); box-shadow:var(--shadow); }
+.card-title{ font-size:1.1rem; font-weight:600; color:#222; }
+.card-text{ font-size:.95rem; color:var(--muted); }
+.card .btn{ border-radius:8px; }
 
-/* Hero section */
-header {
-    background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
-}
+/* ====== Footer (comune) ====== */
+footer{ margin-top:2rem; font-size:.9rem; }
 
-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
+/* ====== Form controls (comune) ====== */
+input.form-control{
+  border-radius:8px; border:1px solid #ccc; box-shadow:none;
 }
-
-header p {
-    font-size: 1.2rem;
-    color: #555;
+input.form-control:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 5px rgba(13,110,253,.25);
 }
-
-/* Sezione prodotti */
-section h2 {
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 30px;
-}
-
-/* Card prodotto */
-.card {
-    border: none;
-    border-radius: 12px;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
-}
-
-.card-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #222;
-}
-
-.card-text {
-    font-size: 0.95rem;
-    color: #666;
-}
-
-.card .btn {
-    border-radius: 8px;
-    font-weight: 500;
-}
-
-/* Prezzo */
-.card p.fw-bold {
-    font-size: 1.1rem;
-    color: #0d6efd;
-}
-
-/* Footer */
-footer {
-    margin-top: 40px;
-    font-size: 0.9rem;
-    background-color: #212529 !important;
-}
-
-footer p {
-    margin: 0;
-    color: #ddd;
-}
+.btn{ border-radius:8px; }

@@ -1,0 +1,25 @@
+/* Contenitore full-height chiaro come la home */
+section.min-vh-100{ background:var(--bg); }
+
+/* Card di login */
+.login-card{
+  width: 400px;
+  max-width: 92vw;
+  border:1px solid #ddd;
+  border-radius:var(--radius);
+  background:#fff;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.login-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow);
+}
+.login-card h2{
+  font-weight:700; color:#333;
+}
+.login-card .form-control{ padding:.65rem .8rem; }
+.login-card button{ padding:.65rem .8rem; font-weight:600; }
+
+/* Messaggi */
+.login-card .alert{ border-radius:8px; }

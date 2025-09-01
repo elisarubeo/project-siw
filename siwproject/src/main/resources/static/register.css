@@ -1,0 +1,46 @@
+/* Card registrazione / successo */
+.register-card{
+  width: 520px;
+  max-width: 94vw;
+  border:1px solid #ddd;
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.register-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+}
+.register-card h2{
+  font-weight:700; color:#333;
+}
+
+/* Campi form */
+.register-card .form-control{
+  border-radius:8px;
+  border:1px solid #ccc;
+  box-shadow:none;
+  padding:.65rem .8rem;
+}
+.register-card .form-control:focus{
+  border-color:#0d6efd;
+  box-shadow:0 0 5px rgba(13,110,253,.25);
+}
+
+/* Pulsanti */
+.register-card .btn{
+  border-radius:8px;
+  padding:.65rem .8rem;
+  font-weight:600;
+}
+
+/* Messaggi errore (Thymeleaf) */
+.invalid-feedback.d-block{
+  font-size:.9rem;
+}
+
+/* Header coerente con homepage */
+header{
+  background:linear-gradient(135deg,#e9f2ff,#f8f9fa);
+}

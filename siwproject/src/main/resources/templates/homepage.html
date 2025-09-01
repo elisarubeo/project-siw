@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Catalogo Prodotti</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!-- Bootstrap (puoi sostituire con il tuo CSS custom) -->
+	<link rel="stylesheet" th:href="@{/css/homepage.css}">
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -21,7 +22,6 @@
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/prodotto}">Categorie</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/search}">Search</a></li>
                 <li class="nav-item" th:if="${credentials == null}">
                     <a class="nav-link" th:href="@{/login}">Login</a>
                 </li>
@@ -37,7 +37,15 @@
 <header class="bg-light text-center py-5">
     <div class="container">
         <h1 class="display-4">Benvenuto nel Catalogo Prodotti</h1>
-        <p class="lead">Trova i prodotti per ogni esigenza</p>
+        <p class="lead">Trova prodotti per ogni esigenza</p>
+
+        <!-- Barra di ricerca -->
+        <form th:action="@{/search}" method="get" class="d-flex justify-content-center mt-4">
+            <div class="input-group w-50">
+                <input type="text" class="form-control" name="query" placeholder="Cerca prodotti...">
+                <button class="btn btn-primary" type="submit">Cerca</button>
+            </div>
+        </form>
     </div>
 </header>
 
