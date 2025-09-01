@@ -40,9 +40,9 @@ public class AuthConfiguration {
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/", "/index", "/register", "/login",
+                    "/", "/homepage", "/register", "/login",
                     "/css/**", "/images/**", "/favicon.ico", "/search",
-                    "/libro/**", "/autore/**"
+                    "/prodotto/**"
                 ).permitAll()
                 .requestMatchers("/admin/**").hasAuthority(ADMIN_ROLE)
                 .requestMatchers("/success").authenticated()

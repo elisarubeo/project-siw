@@ -74,7 +74,7 @@ public class AuthenticationController {
         Iterable<Prodotto> allProdotti = prodottoService.findAll();
         model.addAttribute("prodotti", allProdotti);
 
-        return "index";
+        return "homepage";
     }
 
     @GetMapping("/success")
@@ -92,7 +92,7 @@ public class AuthenticationController {
         Iterable<Prodotto> allProdotti = prodottoService.findAll();
         model.addAttribute("prodotti", allProdotti);
 
-        return "index";
+        return "homepage";
     }
 
 }
