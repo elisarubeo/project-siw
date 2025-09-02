@@ -1,5 +1,9 @@
 package it.uniroma3.siw.controller;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,8 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import it.uniroma3.siw.model.Categoria;
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Prodotto;
+import it.uniroma3.siw.service.CategoriaService;
 import it.uniroma3.siw.service.CredentialsService;
 import it.uniroma3.siw.service.ProdottoService;
 import jakarta.validation.Valid;
@@ -28,6 +34,9 @@ public class ProdottoController {
 	
 	@Autowired
 	private ProdottoService prodottoService;
+	
+	@Autowired
+    private CategoriaService categoriaService;
 	
 	/**
      * Metodo eseguito prima di OGNI handler: aggiunge "credentials" al model
@@ -63,24 +72,42 @@ public class ProdottoController {
         if (!model.containsAttribute("prodotto")) {
             model.addAttribute("prodotto", new Prodotto());
         }
+        // Passo le categorie per la vista (checkbox)
+        model.addAttribute("categorie", categoriaService.findAll());
         return "admin/formNewProdotto.html";
     }
 
     
     @PostMapping("/admin/saveProdotto")
     public String saveProdotto(
-        @Valid @ModelAttribute("prodotto") Prodotto prodotto,
-        BindingResult bindingResult,
-        Model model) {
-    	 if (prodottoService.existsByNome(prodotto.getNome())) {
-             bindingResult.rejectValue("nome", "error.prodotto", "Questo prodotto esiste già");
-         	}
-        if (bindingResult.hasErrors())
+            @Valid @ModelAttribute("prodotto") Prodotto prodotto,
+            BindingResult bindingResult,
+            @RequestParam(value = "categorieIds", required = false) List<Long> categorieIds,
+            Model model) {
+
+        // Validazioni custom
+        if (prodottoService.existsByNome(prodotto.getNome())) {
+            bindingResult.rejectValue("nome", "error.prodotto", "Questo prodotto esiste già");
+        }
+        if (categorieIds == null || categorieIds.isEmpty()) {
+            bindingResult.reject("categorie", "Devi selezionare almeno una categoria");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categorie", categoriaService.findAll()); // ripopola lista
             return "admin/formNewProdotto.html";
-            
+        }
+
+        // Associa le categorie selezionate
+        Set<Categoria> selezionate = new HashSet<>();
+        for (Long idCat : categorieIds) {
+            Categoria c = categoriaService.findById(idCat);
+            if (c != null) selezionate.add(c);
+        }
+        prodotto.setCategorie(selezionate);
 
         prodottoService.save(prodotto);
-        return "admin/successProdotto.html"; 
+        return "admin/successProdotto.html";
     }
     
     /**

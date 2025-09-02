@@ -11,22 +11,28 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Prodotto {
 	
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-	private String nome;
-	
-	private double prezzo;
-	
-	private String descrizione;
-	
-	@ManyToMany
+    @NotBlank(message = "Il nome è obbligatorio")
+    private String nome;
+
+    @NotNull(message = "Il prezzo è obbligatorio")
+    @Positive(message = "Il prezzo deve essere maggiore di 0")
+    private Double prezzo; 
+
+    // opzionale
+    private String descrizione;
+
+    @ManyToMany
     private Set<Categoria> categorie;
 	
 
@@ -46,11 +52,11 @@ public class Prodotto {
 		this.nome = nome;
 	}
 
-	public double getPrezzo() {
+	public Double getPrezzo() {
 		return prezzo;
 	}
 
-	public void setPrezzo(double prezzo) {
+	public void setPrezzo(Double prezzo) {
 		this.prezzo = prezzo;
 	}
 

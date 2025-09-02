@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuovo Prodotto</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/homepage.css}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">MyCatalog</a>
+  </div>
+</nav>
+
+<div class="container py-5" style="max-width: 800px;">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h3 mb-0">Crea nuovo prodotto</h1>
+    <a th:href="@{/admin/formNewCategoria(from='new-product')}" class="btn btn-outline-success">
+      + Crea nuova categoria
+    </a>
+  </div>
+
+  <form th:action="@{/admin/saveProdotto}" th:object="${prodotto}" method="post" novalidate>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+        <input type="text" id="nome" th:field="*{nome}" class="form-control" placeholder="Es. Lampada da Tavolo" required>
+        <div class="text-danger small" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">Errore</div>
+      </div>
+
+      <div class="col-md-6">
+        <label for="prezzo" class="form-label">Prezzo (€) <span class="text-danger">*</span></label>
+        <input type="number" step="0.01" min="0.01" id="prezzo" th:field="*{prezzo}" class="form-control" placeholder="0.00" required>
+        <div class="text-danger small" th:if="${#fields.hasErrors('prezzo')}" th:errors="*{prezzo}">Errore</div>
+      </div>
+
+      <div class="col-12">
+        <label for="descrizione" class="form-label">Descrizione (facoltativa)</label>
+        <textarea id="descrizione" rows="3" th:field="*{descrizione}" class="form-control"
+                  placeholder="Descrizione breve del prodotto..."></textarea>
+        <div class="text-danger small" th:if="${#fields.hasErrors('descrizione')}" th:errors="*{descrizione}">Errore</div>
+      </div>
+
+      <!-- Categorie (obbligatorie) -->
+      <div class="col-12">
+        <label class="form-label">Categorie <span class="text-danger">*</span></label>
+        <div class="border rounded p-3">
+          <!-- elenco checkbox -->
+          <div class="form-check" th:each="cat,iterStat : ${categorie}">
+            <input class="form-check-input" type="checkbox"
+                   name="categorieIds"
+                   th:id="${'cat_' + cat.id}"
+                   th:value="${cat.id}"
+				   <input ... th:attrappend="required=${iterStat.index == 0}"> <!-- obbliga almeno una -->
+            <label class="form-check-label" th:for="${'cat_' + cat.id}" th:text="${cat.nome}">Categoria</label>
+          </div>
+
+          <div class="text-muted small mt-2" th:if="${#lists.isEmpty(categorie)}">
+            Non ci sono categorie disponibili.
+            <a th:href="@{/admin/formNewCategoria(from='new-product')}">Crea una categoria</a>.
+          </div>
+        </div>
+
+        <!-- errore globale “categorie” se non selezionate -->
+        <div class="text-danger small mt-1" th:if="${#fields.hasGlobalErrors()}"
+             th:each="e : ${#fields.globalErrors()}"
+             th:text="${e.code == 'categorie' ? e.defaultMessage : ''}">
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Salva</button>
+      <a th:href="@{/admin/prodotti}" class="btn btn-secondary">Annulla</a>
+    </div>
+  </form>
+</div>
+
+<footer class="bg-dark text-light text-center py-3">
+  <p>&copy; 2025 MyCatalog - Tutti i diritti riservati</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

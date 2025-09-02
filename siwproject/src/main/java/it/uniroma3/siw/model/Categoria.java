@@ -11,17 +11,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotBlank;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Entity
 public class Categoria {
-	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-	
-	private String nome;
-	
-	@ManyToMany(mappedBy = "categorie")
+
+    @NotBlank(message = "Il nome è obbligatorio")
+    private String nome;
+
+    @ManyToMany(mappedBy = "categorie")
     private Set<Prodotto> prodotti;
 
 	public Long getId() {
