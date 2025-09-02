@@ -9,26 +9,45 @@
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">MyCatalog</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/prodotto}">Categorie</a></li>
-                <li class="nav-item" th:if="${credentials == null}">
-                    <a class="nav-link active" th:href="@{/login}">Login</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <div class="container-fluid">
+	    <a class="navbar-brand" th:href="@{/}">MyCatalog</a>
+	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+	            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
 
+	    <div class="collapse navbar-collapse" id="navbarNav">
+	      <ul class="navbar-nav ms-auto">
+	        <li class="nav-item"><a class="nav-link active" th:href="@{/}">Home</a></li>
+
+	        <!-- Dropdown Categorie -->
+	        <li class="nav-item dropdown">
+	          <a class="nav-link dropdown-toggle" href="#" id="categorieDropdown" role="button"
+	             data-bs-toggle="dropdown" aria-expanded="false">
+	            Categorie
+	          </a>
+	          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="categorieDropdown">
+	            <li th:each="cat : ${@categoriaService.findAll()}">
+	              <a class="dropdown-item" th:href="@{'/categoria/' + ${cat.id}}" th:text="${cat.nome}">Categoria</a>
+	            </li>
+	            <li th:if="${#lists.isEmpty(@categoriaService.findAll())}">
+	              <span class="dropdown-item-text text-muted">Nessuna categoria</span>
+	            </li>
+	          </ul>
+	        </li>
+
+	        <li class="nav-item" th:if="${credentials == null}">
+	          <a class="nav-link" th:href="@{/login}">Login</a>
+	        </li>
+	        <li class="nav-item" th:if="${credentials != null}">
+	          <a class="nav-link" th:href="@{/logout}">Logout</a>
+	        </li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
 <!-- Login Form -->
 <section class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
     <div class="login-card p-4 shadow rounded bg-white" style="width: 400px;">

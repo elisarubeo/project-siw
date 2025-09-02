@@ -96,7 +96,7 @@ public class CategoriaController {
             Model model) {
 
         if (categoriaService.existsByName(categoria.getNome())) {
-            bindingResult.rejectValue("nome", "error.autore", "Questa categoria esiste già");
+            bindingResult.rejectValue("nome", "error.categoria", "Questa categoria esiste già");
         }
 
         if (bindingResult.hasErrors()) {
