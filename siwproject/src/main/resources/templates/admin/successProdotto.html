@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Prodotto creato con successo</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/homepage.css}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/admin}">Admin Dashboard</a>
+  </div>
+</nav>
+
+<div class="container py-5 text-center" style="max-width: 700px;">
+  <div class="alert alert-success" role="alert">
+    Il prodotto è stato inserito con successo!
+  </div>
+
+  <div class="d-flex justify-content-center gap-3 mt-4">
+	<a href="/" th:href="@{/}" class="btn btn-primary">🏠 Torna alla home</a>
+    <a th:href="@{/admin/formNewProdotto}" class="btn btn-success">➕ Inserisci un altro prodotto</a>
+  </div>
+</div>
+
+<footer class="bg-dark text-light text-center py-3 mt-5">
+  <p>&copy; 2025 MyCatalog - Area Admin</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

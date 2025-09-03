@@ -42,4 +42,8 @@ public class CategoriaService {
     public List<Categoria> findAllWithProdotti() {
         return categoriaRepository.findAllWithProdotti();
     }
+    
+    public boolean hasProdotti(Long categoriaId) {
+        return categoriaRepository.existsByIdAndProdottiIsNotEmpty(categoriaId);
+    }
 }

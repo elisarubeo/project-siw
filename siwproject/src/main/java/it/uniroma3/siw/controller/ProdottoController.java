@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.uniroma3.siw.model.Categoria;
 import it.uniroma3.siw.model.Credentials;
@@ -28,23 +30,24 @@ import jakarta.validation.Valid;
 
 @Controller
 public class ProdottoController {
-	
-	@Autowired
+
+    @Autowired
     private CredentialsService credentialsService;
-	
-	@Autowired
-	private ProdottoService prodottoService;
-	
-	@Autowired
+
+    @Autowired
+    private ProdottoService prodottoService;
+
+    @Autowired
     private CategoriaService categoriaService;
-	
-	/**
+
+    /**
      * Metodo eseguito prima di OGNI handler: aggiunge "credentials" al model
      */
     @ModelAttribute
     public void addCredentialsToModel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
             model.addAttribute("credentials", credentials);
@@ -52,7 +55,7 @@ public class ProdottoController {
             model.addAttribute("credentials", null);
         }
     }
-    
+
     /**
      * Pagina ADMIN: lista di tutti i prodotti + pulsante aggiungi
      */
@@ -62,11 +65,10 @@ public class ProdottoController {
         model.addAttribute("prodotto", new Prodotto());
         return "admin/prodottiAdmin.html";
     }
-    
+
     /**
-     * Salva nuovo prodotto (solo admin)
+     * Form nuovo prodotto (solo admin)
      */
-    
     @GetMapping("/admin/formNewProdotto")
     public String formNewProdotto(Model model) {
         if (!model.containsAttribute("prodotto")) {
@@ -77,7 +79,9 @@ public class ProdottoController {
         return "admin/formNewProdotto.html";
     }
 
-    
+    /**
+     * Salva nuovo prodotto (solo admin)
+     */
     @PostMapping("/admin/saveProdotto")
     public String saveProdotto(
             @Valid @ModelAttribute("prodotto") Prodotto prodotto,
@@ -109,7 +113,7 @@ public class ProdottoController {
         prodottoService.save(prodotto);
         return "admin/successProdotto.html";
     }
-    
+
     /**
      * Form di modifica prodotto
      */
@@ -122,30 +126,63 @@ public class ProdottoController {
         model.addAttribute("prodotto", prodotto);
         return "admin/formUpdateProdotto.html";
     }
-    
+
     /**
      * Salva aggiornamento prodotto
      */
     @PostMapping("/admin/updateProdotto/{id}")
     public String updateProdotto(@PathVariable("id") Long id,
-                              @RequestParam String nome,
-                              @RequestParam double prezzo,
-                              @RequestParam String descrizione) {
-    	Prodotto prodotto = prodottoService.findById(id);
+                                 @RequestParam String nome,
+                                 @RequestParam double prezzo,
+                                 @RequestParam String descrizione) {
+        Prodotto prodotto = prodottoService.findById(id);
+        if (prodotto == null) {
+            return "error.html";
+        }
+
+        // Aggiorna i campi (il tuo vecchio codice non li settava)
+        prodotto.setNome(nome);
+        prodotto.setPrezzo(prezzo);
+        prodotto.setDescrizione(descrizione);
 
         prodottoService.save(prodotto);
         return "admin/successUpdate.html";
     }
-    
+
     /**
-     * Cancella prodotto
+     * Cancella prodotto — con popup di esito su homepage (flash attributes)
      */
     @GetMapping("/admin/deleteProdotto/{id}")
-    public String deleteProdotto(@PathVariable("id") Long id) {
-        prodottoService.deleteById(id);
-        return "redirect:/admin/prodotti";
+    public String deleteProdotto(@PathVariable("id") Long id, RedirectAttributes ra) {
+        try {
+            Prodotto p = prodottoService.findById(id);
+            if (p == null) {
+                ra.addFlashAttribute("popupType", "danger");
+                ra.addFlashAttribute("popupTitle", "Prodotto inesistente");
+                ra.addFlashAttribute("popupMessage", "Il prodotto che stai tentando di eliminare non esiste.");
+                return "redirect:/";
+            }
+
+            prodottoService.deleteById(id);
+
+            ra.addFlashAttribute("popupType", "success");
+            ra.addFlashAttribute("popupTitle", "Eliminazione riuscita");
+            ra.addFlashAttribute("popupMessage", "Prodotto eliminato correttamente.");
+            return "redirect:/";
+
+        } catch (EmptyResultDataAccessException ex) {
+            ra.addFlashAttribute("popupType", "danger");
+            ra.addFlashAttribute("popupTitle", "Prodotto inesistente");
+            ra.addFlashAttribute("popupMessage", "Il prodotto che stai tentando di eliminare non esiste.");
+            return "redirect:/";
+        } catch (Exception ex) {
+            ra.addFlashAttribute("popupType", "danger");
+            ra.addFlashAttribute("popupTitle", "Errore");
+            ra.addFlashAttribute("popupMessage", "Si è verificato un errore durante l'eliminazione del prodotto.");
+            return "redirect:/";
+        }
     }
-    
+
     /**
      * Lista pubblica
      */
@@ -154,7 +191,7 @@ public class ProdottoController {
         model.addAttribute("prodotti", prodottoService.findAll());
         return "prodotto.html";
     }
-    
+
     /**
      * Dettaglio pubblico
      */
@@ -171,7 +208,8 @@ public class ProdottoController {
         boolean mostraBottoneCommento = false;
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)) {
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
@@ -186,7 +224,7 @@ public class ProdottoController {
 
         return "prodotto.html";
     }
-    
+
     /**
      * Search page
      */

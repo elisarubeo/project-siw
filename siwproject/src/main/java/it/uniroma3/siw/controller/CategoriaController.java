@@ -119,19 +119,27 @@ public class CategoriaController {
      * Form per eliminare una categoria
      */
     @GetMapping("/admin/deleteCategoria/{id}")
-    public String deleteCategoria(@PathVariable("id") Long id, Model model) {
+    public String deleteCategoria(@PathVariable("id") Long id,
+                                  org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
         Categoria categoria = categoriaService.findById(id);
-
         if (categoria == null) {
-            return "error.html";
+            ra.addFlashAttribute("popupType", "danger");
+            ra.addFlashAttribute("popupTitle", "Categoria inesistente");
+            ra.addFlashAttribute("popupMessage", "La categoria che stai tentando di eliminare non esiste.");
+            return "redirect:/";
         }
 
-        if (!categoria.getProdotti().isEmpty()) {
-            model.addAttribute("messaggioErrore", "Non puoi eliminare una categoria con prodotti associati.");
-            return "erroreEliminaCategoria.html";
+        if (categoriaService.hasProdotti(id)) {
+            ra.addFlashAttribute("popupType", "warning");
+            ra.addFlashAttribute("popupTitle", "Operazione non consentita");
+            ra.addFlashAttribute("popupMessage", "Non puoi eliminare una categoria con prodotti associati.");
+            return "redirect:/";
         }
 
         categoriaService.deleteById(id);
-        return "redirect:/admin/categorie";
+        ra.addFlashAttribute("popupType", "success");
+        ra.addFlashAttribute("popupTitle", "Eliminazione riuscita");
+        ra.addFlashAttribute("popupMessage", "Categoria eliminata correttamente.");
+        return "redirect:/";
     }
 }
