@@ -27,9 +27,7 @@
 
     <div class="d-flex gap-2">
       <button type="submit" class="btn btn-primary">Salva</button>
-      <a th:href="${from} == 'new-product' ? @{/admin/formNewProdotto} : @{/admin/categorie}" class="btn btn-secondary">
-        Annulla
-      </a>
+	  <a th:href="@{/admin}" class="btn btn-secondary">Annulla</a>
     </div>
   </form>
 </div>
