@@ -1,8 +1,8 @@
 package it.uniroma3.siw.controller;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -103,11 +103,10 @@ public class ProdottoController {
         }
 
         // Associa le categorie selezionate
-        Set<Categoria> selezionate = new HashSet<>();
-        for (Long idCat : categorieIds) {
-            Categoria c = categoriaService.findById(idCat);
-            if (c != null) selezionate.add(c);
-        }
+        Set<Categoria> selezionate = categorieIds.stream()
+                .map(categoriaService::findById)
+                .filter(c -> c != null)
+                .collect(Collectors.toSet());
         prodotto.setCategorie(selezionate);
 
         prodottoService.save(prodotto);
@@ -124,30 +123,67 @@ public class ProdottoController {
             return "error.html";
         }
         model.addAttribute("prodotto", prodotto);
+        model.addAttribute("categorie", categoriaService.findAll());
+
+        // ID delle categorie già associate per pre-selezionare le checkbox
+        Set<Long> selectedCategorieIds = prodotto.getCategorie()
+                .stream()
+                .map(Categoria::getId)
+                .collect(Collectors.toSet());
+        model.addAttribute("selectedCategorieIds", selectedCategorieIds);
+
         return "admin/formUpdateProdotto.html";
     }
 
     /**
-     * Salva aggiornamento prodotto
+     * Salva aggiornamento prodotto:
+     * - Prezzo, descrizione e categorie aggiornabili
      */
     @PostMapping("/admin/updateProdotto/{id}")
     public String updateProdotto(@PathVariable("id") Long id,
-                                 @RequestParam String nome,
                                  @RequestParam double prezzo,
-                                 @RequestParam String descrizione) {
+                                 @RequestParam String descrizione,
+                                 @RequestParam(value = "categorieIds", required = false) List<Long> categorieIds,
+                                 Model model,
+                                 RedirectAttributes ra) {
         Prodotto prodotto = prodottoService.findById(id);
         if (prodotto == null) {
             return "error.html";
         }
 
-        // Aggiorna i campi (il tuo vecchio codice non li settava)
-        prodotto.setNome(nome);
+        // Validazione: almeno una categoria selezionata
+        if (categorieIds == null || categorieIds.isEmpty()) {
+            model.addAttribute("prodotto", prodotto);
+            model.addAttribute("categorie", categoriaService.findAll());
+            Set<Long> selectedCategorieIds = prodotto.getCategorie()
+                    .stream()
+                    .map(Categoria::getId)
+                    .collect(Collectors.toSet());
+            model.addAttribute("selectedCategorieIds", selectedCategorieIds);
+            model.addAttribute("errorCategorie", "Seleziona almeno una categoria");
+            return "admin/formUpdateProdotto.html";
+        }
+
+        // Aggiorna i campi modificabili
         prodotto.setPrezzo(prezzo);
         prodotto.setDescrizione(descrizione);
 
+        // Riassegna le categorie selezionate
+        Set<Categoria> selezionate = categorieIds.stream()
+                .map(categoriaService::findById)
+                .filter(c -> c != null)
+                .collect(Collectors.toSet());
+        prodotto.setCategorie(selezionate);
+
         prodottoService.save(prodotto);
-        return "admin/successUpdate.html";
+
+        // Flash per popup sulla home
+        ra.addFlashAttribute("popupType", "success");
+        ra.addFlashAttribute("popupTitle", "Modifica salvata");
+        ra.addFlashAttribute("popupMessage", "Il prodotto è stato aggiornato correttamente.");
+        return "redirect:/";
     }
+
 
     /**
      * Cancella prodotto — con popup di esito su homepage (flash attributes)
