@@ -3,6 +3,7 @@ package it.uniroma3.siw.controller;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -258,7 +259,7 @@ public class ProdottoController {
 
         model.addAttribute("mostraBottoneCommento", mostraBottoneCommento);
 
-        return "prodotto.html";
+        return "prodottoDettaglio.html";
     }
 
     /**
@@ -269,4 +270,90 @@ public class ProdottoController {
         model.addAttribute("prodotti", prodottoService.searchByQuery(query));
         return "searchResults.html";
     }
+    
+    @PostMapping("/admin/prodotto/{id}/simili/add")
+    public String addSimile(@PathVariable Long id,
+                            @RequestParam("targetId") Long targetId,
+                            RedirectAttributes ra) {
+        try {
+            prodottoService.addSimile(id, targetId);
+            ra.addFlashAttribute("popupType", "success");
+            ra.addFlashAttribute("popupTitle", "Aggiunto simile");
+            ra.addFlashAttribute("popupMessage", "Prodotto simile aggiunto correttamente.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("popupType", "danger");
+            ra.addFlashAttribute("popupTitle", "Errore");
+            ra.addFlashAttribute("popupMessage", e.getMessage());
+        }
+        return "redirect:/admin/formUpdateProdotto/" + id;
+    }
+
+    @PostMapping("/admin/prodotto/{id}/simili/remove")
+    public String removeSimile(@PathVariable Long id,
+                               @RequestParam("targetId") Long targetId,
+                               RedirectAttributes ra) {
+        try {
+            prodottoService.removeSimile(id, targetId);
+            ra.addFlashAttribute("popupType", "success");
+            ra.addFlashAttribute("popupTitle", "Rimosso simile");
+            ra.addFlashAttribute("popupMessage", "Prodotto simile rimosso correttamente.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("popupType", "danger");
+            ra.addFlashAttribute("popupTitle", "Errore");
+            ra.addFlashAttribute("popupMessage", e.getMessage());
+        }
+        return "redirect:/admin/formUpdateProdotto/" + id;
+    }
+    
+    @GetMapping("/admin/prodotto/{id}/simili/select")
+    public String selectSimili(@PathVariable Long id, Model model) {
+        Prodotto prodotto = prodottoService.findById(id);
+        if (prodotto == null) return "error.html";
+
+        Set<Long> giaSimiliIds = prodotto.getTuttiISimili().stream()
+                .map(Prodotto::getId)
+                .collect(Collectors.toSet());
+
+        List<Prodotto> candidati = StreamSupport
+                .stream(prodottoService.findAll().spliterator(), false) // <— qui la conversione
+                .filter(p -> !p.getId().equals(id))
+                .filter(p -> !giaSimiliIds.contains(p.getId()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("prodotto", prodotto);
+        model.addAttribute("candidatiSimili", candidati);
+        return "admin/selectSimili.html";
+    }
+
+    @PostMapping("/admin/prodotto/{id}/simili/add-bulk")
+    public String addSimiliBulk(@PathVariable Long id,
+                                @RequestParam(value = "targetIds", required = false) List<Long> targetIds,
+                                RedirectAttributes ra) {
+        if (targetIds == null || targetIds.isEmpty()) {
+            ra.addFlashAttribute("popupType", "warning");
+            ra.addFlashAttribute("popupTitle", "Nessuna selezione");
+            ra.addFlashAttribute("popupMessage", "Seleziona almeno un prodotto da aggiungere come simile.");
+            return "redirect:/admin/prodotto/" + id + "/simili/select";
+        }
+
+        int ok = 0, ko = 0;
+        for (Long tId : targetIds) {
+            try {
+                prodottoService.addSimile(id, tId);
+                ok++;
+            } catch (Exception e) {
+                ko++;
+            }
+        }
+
+        ra.addFlashAttribute("popupType", ko == 0 ? "success" : "warning");
+        ra.addFlashAttribute("popupTitle", "Aggiornamento prodotti simili");
+        ra.addFlashAttribute("popupMessage",
+                (ok > 0 ? ok + " aggiunti. " : "") +
+                (ko > 0 ? ko + " non aggiunti." : "")
+        );
+
+        return "redirect:/admin/formUpdateProdotto/" + id;
+    }
+
 }
