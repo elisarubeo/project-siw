@@ -151,11 +151,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Link gestione simili (solo admin) -->
-      <div class="mt-3" th:if="${credentials != null and credentials.role == 'ADMIN'}">
-        <a class="link-secondary" th:href="@{'/admin/formUpdateProdotto/' + ${prodotto.id}}">Gestisci prodotti simili</a>
-      </div>
     </div>
   </div>
 </div>

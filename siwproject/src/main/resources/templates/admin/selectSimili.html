@@ -64,7 +64,7 @@
           <button type="submit" class="btn btn-primary" th:disabled="${#lists.isEmpty(candidatiSimili)}">
             Aggiungi selezionati
           </button>
-          <a th:href="@{'/admin/formUpdateProdotto/' + ${prodotto.id}}" class="btn btn-outline-secondary">Annulla</a>
+          <a th:href="@{'/prodotto/' + ${prodotto.id}}" class="btn btn-outline-secondary">Annulla</a>
         </div>
       </form>
     </div>
