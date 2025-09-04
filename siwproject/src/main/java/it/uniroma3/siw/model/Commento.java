@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Commento {
@@ -12,6 +14,8 @@ public class Commento {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	
+	@NotBlank(message = "Il testo è obbligatorio")
+	@Size(max = 1000, message = "Massimo 1000 caratteri")
 	private String testo;
 	
 	@ManyToOne

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="'Commenta: ' + ${prodotto.nome}">Nuovo commento</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">MyCatalog</a>
+  </div>
+</nav>
+
+<div class="container" style="max-width: 720px;">
+  <div class="card shadow-sm">
+    <div class="card-header">
+      <h5 class="mb-0">
+        <span>Nuovo commento su: </span>
+        <span class="fw-semibold" th:text="${prodotto.nome}">Prodotto</span>
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <form th:action="@{'/user/prodotto/' + ${prodotto.id} + '/commento'}"
+            th:object="${commento}"
+            method="post"
+            novalidate>
+
+        <!-- CSRF (se abilitato) -->
+        <input type="hidden" th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"/>
+
+        <!-- Errori globali: ***DENTRO*** il form (serve il th:object) -->
+        <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+          <ul class="mb-0">
+            <li th:each="err : ${#fields.globalErrors()}" th:text="${err}">Errore</li>
+          </ul>
+        </div>
+
+        <!-- Testo del commento (unico campo) -->
+        <div class="mb-3">
+          <label for="testo" class="form-label">Testo del commento</label>
+          <textarea id="testo"
+                    class="form-control"
+                    th:field="*{testo}"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="Scrivi qui il tuo commento…"
+                    required></textarea>
+
+          <!-- Errore di validazione sul campo 'testo' -->
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('testo')}"
+               th:errors="*{testo}">Il testo è obbligatorio</div>
+
+          <!-- Contatore caratteri (opzionale) -->
+          <div class="form-text">
+            <span id="count">0</span>/1000 caratteri
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Pubblica commento</button>
+          <a th:href="@{'/prodotto/' + ${prodotto.id}}" class="btn btn-outline-secondary">Annulla</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Contatore caratteri
+  document.addEventListener('DOMContentLoaded', function () {
+    const ta = document.getElementById('testo');
+    const count = document.getElementById('count');
+    if (ta && count) {
+      const update = () => count.textContent = ta.value.length.toString();
+      ta.addEventListener('input', update);
+      update();
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

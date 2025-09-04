@@ -93,44 +93,49 @@
               <div th:text="${c.testo}">Testo del commento…</div>
             </div>
 
-            <!-- Azioni: proprietario (DEFAULT) o ADMIN -->
-            <div class="text-nowrap">
-              <a class="btn btn-sm btn-outline-danger"
-                 th:if="${credentials != null and credentials.role == 'ADMIN'}"
-                 th:href="@{'/admin/commento/delete/' + ${c.id}}"
-                 onclick="return confirm('Eliminare questo commento?');">
-                Elimina
-              </a>
-              <a class="btn btn-sm btn-outline-danger"
-                 th:if="${credentials != null and credentials.role == 'DEFAULT' and c.user != null and credentials.user != null and c.user.id == credentials.user.id}"
-                 th:href="@{'/user/commento/delete/' + ${c.id}}"
-                 onclick="return confirm('Eliminare il tuo commento?');">
-                Elimina
-              </a>
-            </div>
+			<div class="text-nowrap">
+			  <!-- ADMIN può solo eliminare -->
+			  <a class="btn btn-sm btn-outline-danger"
+			     th:if="${credentials != null and credentials.role == 'ADMIN'}"
+			     th:href="@{'/admin/commento/delete/' + ${c.id}}"
+			     onclick="return confirm('Eliminare questo commento?');">
+			    Elimina
+			  </a>
+
+			  <!-- AUTORE (DEFAULT) può MODIFICARE e ELIMINARE -->
+			  <a class="btn btn-sm btn-outline-secondary"
+			     th:if="${credentials != null and credentials.role == 'DEFAULT' and c.user != null and credentials.user != null and c.user.id == credentials.user.id}"
+			     th:href="@{'/user/commento/edit/' + ${c.id}}">
+			    Modifica
+			  </a>
+
+			  <a class="btn btn-sm btn-outline-danger"
+			     th:if="${credentials != null and credentials.role == 'DEFAULT' and c.user != null and credentials.user != null and c.user.id == credentials.user.id}"
+			     th:href="@{'/user/commento/delete/' + ${c.id}}"
+			     onclick="return confirm('Eliminare il tuo commento?');">
+			    Elimina
+			  </a>
+			</div>
           </div>
         </li>
       </ul>
-
-      <!-- Link alla pagina dedicata ai commenti (opzionale) -->
-      <div class="mt-3">
-        <a class="link-secondary" th:href="@{'/prodotto/' + ${prodotto.id} + '/commenti'}">Vedi pagina commenti</a>
-      </div>
     </div>
   </div>
 
   <!-- Prodotti simili -->
+  <!-- Prodotti simili -->
   <div class="card shadow-sm mb-5">
-	<div class="card-header d-flex justify-content-between align-items-center">
-	  <h5 class="mb-0">Prodotti simili</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Prodotti simili</h5>
 
-	  <!-- Solo ADMIN -->
-	  <a th:if="${credentials != null and credentials.role == 'ADMIN'}"
-	     th:href="@{'/admin/prodotto/' + ${prodotto.id} + '/simili/select'}"
-	     class="btn btn-sm btn-primary">
-	    + Aggiungi simili
-	  </a>
-	</div>
+      <!-- Solo ADMIN -->
+      <a th:if="${credentials != null and credentials.role == 'ADMIN'}"
+         th:href="@{'/admin/prodotto/' + ${prodotto.id} + '/simili/select'}"
+         class="btn btn-sm btn-primary">
+        + Aggiungi simili
+      </a>
+    </div>
+
     <div class="card-body">
       <div th:if="${#lists.isEmpty(prodotto.tuttiISimili)}" class="text-muted">
         Nessun prodotto simile disponibile.
@@ -144,9 +149,26 @@
               <div class="text-muted mb-3">
                 € <span th:text="${p.prezzo}">0.00</span>
               </div>
-              <p class="card-text small text-truncate" style="-webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical;"
+              <p class="card-text small text-truncate"
+                 style="-webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical;"
                  th:text="${p.descrizione}">Descrizione…</p>
-              <a class="btn btn-sm btn-outline-primary mt-auto" th:href="@{'/prodotto/' + ${p.id}}">Vedi</a>
+
+              <div class="mt-auto d-flex gap-2">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{'/prodotto/' + ${p.id}}">Vedi</a>
+
+                <!-- Pulsante RIMUOVI (solo ADMIN) -->
+                <form th:if="${credentials != null and credentials.role == 'ADMIN'}"
+                      th:action="@{'/admin/prodotto/' + ${prodotto.id} + '/simili/remove'}"
+                      method="post" class="d-inline">
+                  <input type="hidden" name="targetId" th:value="${p.id}"/>
+                  <input type="hidden" th:if="${_csrf != null}"
+                         th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('Rimuovere questo prodotto dai simili?');">
+                    Rimuovi
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>

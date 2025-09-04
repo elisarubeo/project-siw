@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Modifica commento</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/}">MyCatalog</a>
+  </div>
+</nav>
+
+<div class="container" style="max-width: 680px;">
+  <div class="card shadow-sm">
+    <div class="card-header">
+      <h4 class="mb-0">Modifica commento</h4>
+      <small class="text-muted" th:text="${prodotto != null ? prodotto.nome : ''}">Nome prodotto</small>
+    </div>
+
+    <div class="card-body">
+      <form th:action="@{'/user/commento/update/' + ${commento.id}}" th:object="${commento}" method="post">
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="mb-3">
+          <label for="testo" class="form-label">Testo</label>
+          <textarea id="testo" class="form-control" rows="4" th:field="*{testo}" required></textarea>
+
+          <!-- errore solo campo 'testo' -->
+          <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('testo')}" th:errors="*{testo}">Errore</div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Salva</button>
+          <a th:href="@{'/prodotto/' + ${prodotto.id}}" class="btn btn-outline-secondary">Annulla</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -11,6 +11,8 @@ import it.uniroma3.siw.model.Categoria;
 public interface CategoriaRepository extends CrudRepository<Categoria, Long> {
 	
     boolean existsByNome(String nome);
+    
+    boolean existsByNomeIgnoreCase(String nome);
 
     List<Categoria> findByNomeContainingIgnoreCase(String nome);
 

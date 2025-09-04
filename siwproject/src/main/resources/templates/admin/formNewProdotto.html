@@ -22,6 +22,8 @@
     </a>
   </div>
 
+  <!-- Nota: 'novalidate' disattiva la validazione HTML5 del browser.
+       Se vuoi anche il controllo lato client, rimuovilo. -->
   <form th:action="@{/admin/saveProdotto}" th:object="${prodotto}" method="post" novalidate>
     <div class="row g-3">
       <div class="col-md-6">
@@ -48,12 +50,13 @@
         <label class="form-label">Categorie <span class="text-danger">*</span></label>
         <div class="border rounded p-3">
           <!-- elenco checkbox -->
-          <div class="form-check" th:each="cat,iterStat : ${categorie}">
-            <input class="form-check-input" type="checkbox"
+          <div class="form-check" th:each="cat, iterStat : ${categorie}">
+            <input class="form-check-input"
+                   type="checkbox"
                    name="categorieIds"
                    th:id="${'cat_' + cat.id}"
                    th:value="${cat.id}"
-				   <input ... th:attrappend="required=${iterStat.index == 0}"> <!-- obbliga almeno una -->
+                   th:attr="required=${iterStat.index == 0}"> <!-- obbliga almeno una -->
             <label class="form-check-label" th:for="${'cat_' + cat.id}" th:text="${cat.nome}">Categoria</label>
           </div>
 
@@ -63,17 +66,18 @@
           </div>
         </div>
 
-        <!-- errore globale “categorie” se non selezionate -->
-        <div class="text-danger small mt-1" th:if="${#fields.hasGlobalErrors()}"
-             th:each="e : ${#fields.globalErrors()}"
-             th:text="${e.code == 'categorie' ? e.defaultMessage : ''}">
+        <!-- Mostra errori globali (stringhe) es. 'Devi selezionare almeno una categoria' -->
+        <div class="text-danger small mt-1"
+             th:if="${#fields.hasGlobalErrors()}"
+             th:each="err : ${#fields.globalErrors()}"
+             th:text="${err}">
         </div>
       </div>
     </div>
 
     <div class="mt-4 d-flex gap-2">
       <button type="submit" class="btn btn-primary">Salva</button>
-	  <a th:href="@{/}" class="btn btn-secondary">Annulla</a>
+      <a th:href="@{/}" class="btn btn-secondary">Annulla</a>
     </div>
   </form>
 </div>

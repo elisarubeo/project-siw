@@ -262,14 +262,21 @@ public class ProdottoController {
         return "prodottoDettaglio.html";
     }
 
-    /**
-     * Search page
-     */
     @GetMapping("/search")
     public String search(@RequestParam("query") String query, Model model) {
-        model.addAttribute("prodotti", prodottoService.searchByQuery(query));
+        String q = (query != null) ? query.trim() : "";
+
+        // se vuoto rimando in home (evita errori e query “vuote”)
+        if (q.isEmpty()) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("query", q);
+        model.addAttribute("prodotti", prodottoService.searchByQuery(q));
+        model.addAttribute("categorie", categoriaService.searchByQuery(q));
         return "searchResults.html";
     }
+
     
     @PostMapping("/admin/prodotto/{id}/simili/add")
     public String addSimile(@PathVariable Long id,
@@ -302,7 +309,7 @@ public class ProdottoController {
             ra.addFlashAttribute("popupTitle", "Errore");
             ra.addFlashAttribute("popupMessage", e.getMessage());
         }
-        return "redirect:/admin/formUpdateProdotto/" + id;
+        return "redirect:/prodotto/" + id;
     }
     
     @GetMapping("/admin/prodotto/{id}/simili/select")
@@ -353,7 +360,7 @@ public class ProdottoController {
                 (ko > 0 ? ko + " non aggiunti." : "")
         );
 
-        return "redirect:/admin/formUpdateProdotto/" + id;
+        return "redirect:/prodotto/" + id;
     }
 
 }

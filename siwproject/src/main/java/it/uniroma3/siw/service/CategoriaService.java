@@ -1,5 +1,6 @@
 package it.uniroma3.siw.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,4 +47,10 @@ public class CategoriaService {
     public boolean hasProdotti(Long categoriaId) {
         return categoriaRepository.existsByIdAndProdottiIsNotEmpty(categoriaId);
     }
+    
+    public List<Categoria> searchByQuery(String q) {
+        if (q == null || q.trim().isEmpty()) return new ArrayList<>();
+        return categoriaRepository.findByNomeContainingIgnoreCase(q.trim());
+    }
+
 }
